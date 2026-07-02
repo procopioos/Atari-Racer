@@ -13,7 +13,7 @@
 
 ## About the Project
 
-ATARI RACER is an exciting arcade-style racing game where you dodge traffic, collect coins, and set high scores. The game features 3 difficulty levels, 8 car skins with unique speed bonuses, boost mechanics and a combo multiplier system.
+ATARI RACER is an exciting arcade-style racing game where you dodge traffic, collect coins, and set high scores. The game features 3 difficulty levels, 15 car skins with unique speed bonuses, boost mechanics and a combo multiplier system.
 
 ---
 
@@ -191,7 +191,7 @@ pyinstaller --onefile --windowed atari.py
 
 ---
 
-## Contact
+## Contact Me
 
 Email: vidatwin18@gmail.com
 
@@ -199,12 +199,12 @@ Email: vidatwin18@gmail.com
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under MIT.
 
 ---
 
 <div align="center">
 
-**Ready, Set, GO! Enjoy the race!**
+**Ready, Set, GO!**
 
 </div>
