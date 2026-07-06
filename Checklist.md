@@ -5,7 +5,6 @@
 - [ ] Web deployment (soon)
 - [ ] coin lane dedup
 - [ ] lane-stripe period mismatch (should be equal lengths)
-- [ ] Refractoring (almost done)
 
 ## Completed — TheM1ddleM1n
 
@@ -55,6 +54,10 @@
 - [x] Boost glow effect rendered around the player car
 - [x] Random free boost reward on coin collection
 
+## Completed - Esmaili963
+
+- [x] Refractoring
+
 ## Known Limitations (No issues)
 
 - Garage and Game Over screens are mouse-only for navigation; no keyboard shortcut exists to back out of them aside from `R` (restart) on Game Over.
@@ -69,3 +72,4 @@
 
 - **TheM1ddleM1n** — Original base game, bug fixes, performance improvements
 - **VIDAKHOSHPEY22** — Sound system, particle effects, boost mechanic, responsive UI
+- **Esmaili963** - Refractoring `atari.py` into separate folders!
