@@ -5,6 +5,7 @@
 - [ ] Web deployment (soon)
 - [ ] coin lane dedup
 - [ ] lane-stripe period mismatch (should be equal lengths)
+- [ ] Refractoring (almost done)
 
 ## Completed — TheM1ddleM1n
 
