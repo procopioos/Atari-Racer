@@ -150,6 +150,17 @@ pyinstaller --onefile --windowed atari.py
       <br />
       <img src="https://img.shields.io/badge/-Core%20Maintainer-d4af37?style=flat-square" /><br />
     </td>
+    <table align="center">
+  <tr>
+    <td align="center">
+      <a href="https://github.com/Esmaili963">
+        <img src="https://github.com/Esmaili963.png?size=80" width="70" height="70" style="border-radius:50%;" />
+        <br />
+        <b>👑 Esmaili963</b>
+      </a>
+      <br />
+      <img src="https://img.shields.io/badge/-Core%20Contributor-d4af37?style=flat-square" /><br />
+    </td>
     <td align="center">
       <a href="https://github.com/YALDAKHOSHPEY">
         <img src="https://github.com/YALDAKHOSHPEY.png?size=80" width="70" height="70" style="border-radius:50%;" />
