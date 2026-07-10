@@ -42,7 +42,6 @@ python atari.py
 | Difficulty Levels | Easy, Medium, and Hard modes |
 | High Score | Automatically saves your best score |
 | Garage Upgrades | Spend coins on permanent speed and life upgrades |
-| Pause / Resume | Press key `P` |
 
 ---
 
