@@ -42,7 +42,7 @@ python atari.py
 | Difficulty Levels | Easy, Medium, and Hard modes |
 | High Score | Automatically saves your best score |
 | Garage Upgrades | Spend coins on permanent speed and life upgrades |
-| Pause / Resume | Press P anytime |
+| Pause / Resume | Press key `P` |
 
 ---
 
@@ -51,13 +51,13 @@ python atari.py
 | Key | Action |
 |-----|--------|
 | ← → | Steer left / right |
-| SPACE | Boost (50 points) |
+| SPACE | Boost |
 | P | Pause / Resume |
 | R | Restart |
 
 ---
 
-## What's New in V5.6
+## Latest Version - V5.6
 
 - Removed the police chase mechanic to keep the core dodge-and-collect loop tighter
 - Removed the Magnet power-up; Shield and Time Freeze remain
@@ -67,14 +67,7 @@ python atari.py
 - Corrected the README to no longer claim dynamic responsive resizing, since the window size is currently fixed
 - Updated `Checklist.md` to track these changes
 - Renamed from racing-car-game to Atari-Racer for clarity
-
-## Previously in V5.5
-
-- Removed the day/night cycle, which had no effect on gameplay and only added rendering overhead
-- Simplified pause controls to a single key (P); ESC no longer pauses or backs out of menus
-- Fixed police escape bonus so it is awarded consistently on a successful escape
-- Corrected the HUD speed bar to reflect true maximum scroll speed at higher levels
-- Streamlined power-up icon rendering for a small performance improvement
+- Other changes
 
 ---
 
@@ -111,7 +104,6 @@ python atari.py
 ## Installation
 
 ### Dependencies
-
 - Python 3.13
 - pygame
 - numpy (optional, used for sound effects)
