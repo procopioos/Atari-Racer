@@ -39,7 +39,7 @@ python atari.py
 | Particle Effects | Explosions, sparks, and boost trail effects |
 | Power-Ups | Shield and Time Freeze pickups |
 | Weather | Rain that affects grip and scroll speed |
-| Difficulty Levels | Easy, Medium, and Hard modes |
+| Difficulty Levels | Easy, Medium, and Hard |
 | High Score | Automatically saves your best score |
 | Garage Upgrades | Spend coins on permanent speed and life upgrades |
 
@@ -66,7 +66,7 @@ python atari.py
 - Corrected the README to no longer claim dynamic responsive resizing, since the window size is currently fixed
 - Updated `Checklist.md` to track these changes
 - Renamed from racing-car-game to Atari-Racer for clarity
-- Other changes
+- Bump pip/github actions stuff
 
 ---
 
