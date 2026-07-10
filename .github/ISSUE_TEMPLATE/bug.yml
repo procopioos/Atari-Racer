@@ -7,8 +7,9 @@ body:
     attributes:
       value: |
         ### 📌 Project Environment Note
-        * **Target File:** `atari.py` (This template only applies to bugs found in `atari.py`)
+        * **Target File:** `atari.py` (This template will only apply to bugs found in `atari.py`)
         * **Required Python Version:** `3.13`
+        
   - type: textarea
     id: steps
     attributes:
