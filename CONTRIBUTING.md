@@ -1,8 +1,7 @@
 # Contributing to AtariRacer
 
-Thank you for your interest in contributing to AtariRacer.
-
 This project was started by **VIDAKHOSHPEY22** as a personal learning experience and has grown significantly with the help of community contributors. 
+
 
 **TheM1ddleM1n** joined as a co-maintainer, bringing experience from earlier Python projects and a focus on helping new contributors get involved.
 
@@ -28,13 +27,13 @@ This project was started by **VIDAKHOSHPEY22** as a personal learning experience
 - Follow PEP 8 guidelines
 - Include a brief comment for any non-obvious logic
 
-## Reporting Issues
+## Report Bugs
 
 When reporting a bug, please include:
 
 - Your operating system (e.g., Windows, ChromeOS, Linux, Other) and the Python version which is (3.13)
-- Steps to reproduce the issue
-- Screenshots, if applicable
+- Logical steps to resolve the current issue
+- Screenshots if applicable
 
 ## Getting Help
 
@@ -48,6 +47,6 @@ All contributors are listed in the README. **Significant contributions** are hig
 
 ---
 
-Thank you!
+Thank you for your interest in contributing to AtariRacer!
 
 **VIDAKHOSHPEY22** & **TheM1ddleM1n**
