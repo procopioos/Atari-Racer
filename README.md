@@ -32,13 +32,12 @@ python atari.py
 
 | Feature | Description |
 |---------|-------------|
-| Car Skins | 15 different skins with unique speed bonuses |
+| Car Skins | 10 different skins with unique speed bonuses |
 | Boost System | Press SPACE to activate speed boost (costs 50 points) |
 | Combo Multiplier | Chain obstacles and coins for multipliers up to x4 |
 | Sound Effects | Procedurally generated audio for coins, boost, hits, and more |
 | Particle Effects | Explosions, sparks, and boost trail effects |
 | Power-Ups | Shield and Time Freeze pickups |
-| Weather | Rain that affects grip and scroll speed |
 | Difficulty Levels | Easy, Medium, and Hard |
 | High Score | Automatically saves your best score |
 | Garage Upgrades | Spend coins on permanent speed and life upgrades |
@@ -67,6 +66,8 @@ python atari.py
 - Updated `Checklist.md` to track these changes
 - Renamed from racing-car-game to Atari-Racer for clarity
 - Bump pip/github actions stuff
+- Removed the rain weather effect and RainPool system to simplify the gameplay loop
+- Reduced the car skin roster from 15 to 10 and renamed all skins for a more professional tone
 
 ---
 
