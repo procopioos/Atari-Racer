@@ -1,7 +1,6 @@
 # atari.py Development Checklist
 
 ## Open Issues
-- [ ] Remove unneeded code
 
 ## To do Soon
 - [ ] Web deployment
