@@ -1,9 +1,6 @@
 # atari.py Development Checklist
 
 ## Open Issues
-
-- [ ] coin lane dedup
-- [ ] lane-stripe period mismatch
 - [ ] Remove unneeded code
 
 ## To do Soon
@@ -45,6 +42,9 @@
 - [x] Removed Cone hazard because it duplicated Barrier gameplay
 - [x] Removed rain weather effect and RainPool system to simplify gameplay loop
 - [x] Reduced car skin roster from 15 to 10 and renamed all skins for a more professional tone
+- [x] Fixed coin lane dedup to track recent spawn history instead of a transient y-position check that rarely triggered
+- [x] Fixed lane-stripe period mismatch by aligning RUMBLE_PERIOD as a clean divisor of the stripe period, keeping rumble strips and lane stripes in phase
+- [x] Removed unused ROAD_COLOR constant from settings
 
 ## Completed — VIDAKHOSHPEY22
 
