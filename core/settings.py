@@ -34,9 +34,6 @@ _COMBO_THRESHOLDS = (3, 7, 12, 18, 25)
 _COMBO_MULTIPLIERS = (1.5, 2.0, 2.5, 3.0, 4.0)
 COMBO_MAP = {t: m for t, m in zip(_COMBO_THRESHOLDS, _COMBO_MULTIPLIERS)}
 
-WEATHER_CLEAR = "clear"
-WEATHER_RAIN = "rain"
-
 try:
     import numpy as np
     HAS_NUMPY = True
