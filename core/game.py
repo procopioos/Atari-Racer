@@ -8,10 +8,10 @@ from entities.player import Player
 from entities.road import Road
 from entities.obstacles import ObstacleCar, Barrier, OilSlick
 from entities.coin import Coin
-from entities.powerup import PowerUp
 from systems.sound import SoundManager
 from systems.particle import ParticlePool
 from systems.hud import HUD
+from systems.achievements import AchievementManager
 from ui.button import Button
 from ui.menus import MenuRenderer
 from utils.helpers import get_combo_multiplier, level_threshold, clamp
@@ -33,6 +33,7 @@ class Game:
         self.fonts = self._get_fonts()
         self.hud = HUD(self.fonts)
         self.menu_renderer = MenuRenderer(self.fonts)
+        self.achievements = AchievementManager()
 
         self.high_score = load_high_score()
         self.wallet, self.upgrades = load_progress()
@@ -56,7 +57,6 @@ class Game:
         self.obs_cars = []
         self.obs_misc = []
         self.coins = []
-        self.powerups = []
         self.score = 0
         self.run_coins = 0
         self.level = 1
@@ -65,7 +65,6 @@ class Game:
         self.obs_timer = 0.0
         self.obs_interval = 0.0
         self.coin_timer = 0.0
-        self.powerup_timer = 0.0
         self.combo = 0
         self.multiplier = 1.0
         self.combo_timer = 0.0
@@ -74,10 +73,16 @@ class Game:
         self.invincibility_timer = 0.0
         self.level_flash_timer = 0.0
         self.speed_blur_alpha = 0.0
+        self.hit_flash_timer = 0.0
         self.fb_text = ""
         self.fb_pos = (WIDTH // 2, HEIGHT // 2)
         self.fb_timer = 0.0
         self.coin_lane_history = []
+        self.near_miss_cooldowns = {}
+
+        self.toast_ach = None
+        self.toast_timer = 0.0
+        self.toast_max = 3.0
 
         self._blur_surf = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA)
         self._prerender_blur_lines()
@@ -134,9 +139,9 @@ class Game:
         self.obs_cars.clear()
         self.obs_misc.clear()
         self.coins.clear()
-        self.powerups.clear()
         self.particles.active.clear()
         self.coin_lane_history.clear()
+        self.near_miss_cooldowns.clear()
 
         self.score = 0
         self.run_coins = 0
@@ -146,7 +151,6 @@ class Game:
         self.obs_timer = 0.0
         self.obs_interval = diff.obs_interval
         self.coin_timer = 0.0
-        self.powerup_timer = 0.0
         self.combo = 0
         self.multiplier = 1.0
         self.combo_timer = 0.0
@@ -154,8 +158,11 @@ class Game:
         self.invincibility_timer = 0.0
         self.level_flash_timer = 0.0
         self.speed_blur_alpha = 0.0
+        self.hit_flash_timer = 0.0
         self.fb_text = ""
         self.fb_timer = 0.0
+
+        self.achievements.record("runs_played")
 
     def try_boost(self):
         if self.score >= 50 and self.player.boost_timer <= 0:
@@ -171,6 +178,7 @@ class Game:
                 0.8
             )
             self.sound.play("boost")
+            self.achievements.record("boosts_used")
         else:
             self.set_feedback("50 PTS NEEDED!", 0.7)
 
@@ -182,11 +190,11 @@ class Game:
     def update_game(self, dt):
         self.invincibility_timer = max(0.0, self.invincibility_timer - dt)
         self.level_flash_timer = max(0.0, self.level_flash_timer - dt)
+        self.hit_flash_timer = max(0.0, self.hit_flash_timer - dt)
 
         self.player.update(dt, pg.key.get_pressed())
 
-        freeze_factor = 0.3 if self.player.has_powerup(POWERUP_TIMEFREEZE) else 1.0
-        base_speed_factor = self.player.get_speed_factor() * freeze_factor
+        base_speed_factor = self.player.get_speed_factor()
         self.road.scroll_speed = self.scroll_speed * base_speed_factor
         self.road.update(dt)
 
@@ -196,7 +204,7 @@ class Game:
         self.speed_blur_alpha += (target_blur - self.speed_blur_alpha) * dt * 6
 
         diff = DIFFICULTY[self.selected_diff]
-        effective_dt = dt * freeze_factor
+        effective_dt = dt
 
         self.obs_timer += dt
         if self.obs_timer >= self.obs_interval:
@@ -208,15 +216,6 @@ class Game:
             self.coin_timer = 0.0
             self._spawn_coins()
 
-        self.powerup_timer += dt
-        if self.powerup_timer >= 8.0:
-            self.powerup_timer = 0.0
-            if random.random() < 0.55:
-                kind = random.choice([POWERUP_SHIELD, POWERUP_TIMEFREEZE])
-                self.powerups.append(
-                    PowerUp(LANE_CENTERS[random.randint(0, 3)], self.scroll_speed * 0.85, kind)
-                )
-
         invincible = self.invincibility_timer > 0
         player_rect = self.player.get_rect()
 
@@ -226,10 +225,12 @@ class Game:
                 self._on_obstacle_passed(2)
                 continue
 
-            if not invincible and not self.player.has_powerup(POWERUP_SHIELD):
-                if car.get_rect().colliderect(player_rect):
-                    self._on_hit()
+            car_rect = car.get_rect()
+            if not invincible:
+                if car_rect.colliderect(player_rect):
+                    self._on_hit(car_rect.clip(player_rect))
                     return
+                self._check_near_miss(car, car_rect, player_rect)
 
         for obj in self.obs_misc[:]:
             if obj.update(effective_dt):
@@ -240,11 +241,10 @@ class Game:
             if obj.get_rect().colliderect(player_rect):
                 if isinstance(obj, OilSlick):
                     self.obs_misc.remove(obj)
-                    if not self.player.has_powerup(POWERUP_SHIELD):
-                        self.player.apply_oil()
-                        self.set_feedback("SLIPPING!", 0.8)
-                elif not invincible and not self.player.has_powerup(POWERUP_SHIELD):
-                    self._on_hit()
+                    self.player.apply_oil()
+                    self.set_feedback("SLIPPING!", 0.8)
+                elif not invincible:
+                    self._on_hit(obj.get_rect().clip(player_rect))
                     return
 
         for coin in self.coins[:]:
@@ -255,14 +255,6 @@ class Game:
                 self.coins.remove(coin)
                 self._on_coin(int(coin.x), int(coin.y))
 
-        for pu in self.powerups[:]:
-            if pu.update(effective_dt):
-                self.powerups.remove(pu)
-                continue
-            if pu.get_rect().colliderect(player_rect):
-                self.powerups.remove(pu)
-                self._on_powerup(pu.kind, int(pu.x), int(pu.y))
-
         self.combo_timer += dt
         if self.combo_timer >= 2.5:
             self.combo_timer = 0.0
@@ -272,6 +264,14 @@ class Game:
 
         if self.fb_timer > 0:
             self.fb_timer -= dt
+
+        if self.toast_timer > 0:
+            self.toast_timer -= dt
+        else:
+            ach = self.achievements.pop_pending()
+            if ach:
+                self.toast_ach = ach
+                self.toast_timer = self.toast_max
 
         if self.score >= level_threshold(self.level):
             self.level += 1
@@ -286,6 +286,18 @@ class Game:
                 self.coins.append(
                     Coin(LANE_CENTERS[random.randint(0, 3)], self.scroll_speed * 0.9)
                 )
+
+    def _check_near_miss(self, car, car_rect, player_rect):
+        margin = 14
+        near_rect = car_rect.inflate(margin * 2, margin * 2)
+        if near_rect.colliderect(player_rect) and id(car) not in self.near_miss_cooldowns:
+            self.near_miss_cooldowns[id(car)] = True
+            self.combo += 1
+            self._recalc_multiplier()
+            gain = int(3 * self.multiplier)
+            self.score += gain
+            self.set_feedback("CLOSE CALL!", 0.6)
+            self.achievements.record("near_misses")
 
     def _spawn_obstacle(self, diff):
         spd = random.uniform(*diff.obs_speed)
@@ -303,37 +315,52 @@ class Game:
             self.obs_misc.append(OilSlick(lc - OilSlick.WIDTH // 2, spd * 0.8))
 
     def _spawn_coins(self):
-    recent = set(self.coin_lane_history[-4:])
-    available = [lc for lc in LANE_CENTERS if lc not in recent]
-    if not available:
-        available = list(LANE_CENTERS)
+        recent = set(self.coin_lane_history[-4:])
+        available = [lc for lc in LANE_CENTERS if lc not in recent]
+        if not available:
+            available = list(LANE_CENTERS)
 
-    random.shuffle(available)
-    count = random.randint(2, 4) if random.random() < 0.3 else 1
-    count = min(count, len(available))
-    chosen = available[:count]
+        random.shuffle(available)
+        count = random.randint(2, 4) if random.random() < 0.3 else 1
+        count = min(count, len(available))
+        chosen = available[:count]
 
-    for lc in chosen:
-        self.coins.append(Coin(lc, self.scroll_speed * 0.95))
+        for lc in chosen:
+            self.coins.append(Coin(lc, self.scroll_speed * 0.95))
 
-    self.coin_lane_history.extend(chosen)
-    if len(self.coin_lane_history) > 12:
-        self.coin_lane_history = self.coin_lane_history[-12:]
+        self.coin_lane_history.extend(chosen)
+        if len(self.coin_lane_history) > 12:
+            self.coin_lane_history = self.coin_lane_history[-12:]
 
-    def _on_hit(self):
+    def _on_hit(self, contact_rect=None):
         self.lives -= 1
         self.combo = 0
         self._recalc_multiplier()
         self.set_feedback("-1 LIFE!", 1.0)
 
-        self.particles.spawn(
-            self.player.x + Player.WIDTH // 2,
-            self.player.y + Player.HEIGHT // 2,
-            random.uniform(-200, 200),
-            random.uniform(-300, -100),
-            RED,
-            0.8
+        if contact_rect and contact_rect.width > 0:
+            cx, cy = contact_rect.center
+        else:
+            cx = self.player.x + Player.WIDTH // 2
+            cy = self.player.y + Player.HEIGHT // 2
+
+        for _ in range(3):
+            self.particles.spawn(
+                cx, cy,
+                random.uniform(-250, 250),
+                random.uniform(-350, -50),
+                RED,
+                0.5
+            )
+
+        push_dir = -1 if cx < self.player.x + Player.WIDTH // 2 else 1
+        self.player.x = clamp(
+            self.player.x + push_dir * 18,
+            ROAD_LEFT + 2,
+            ROAD_RIGHT - Player.WIDTH - 2
         )
+
+        self.hit_flash_timer = 0.25
         self.sound.play("hit")
 
         if self.lives <= 0:
@@ -346,6 +373,7 @@ class Game:
         self.combo += 1
         self._recalc_multiplier()
         self.score += int(base_points * self.multiplier)
+        self.achievements.set_stat("best_combo", self.combo)
 
     def _on_coin(self, x, y):
         self.combo += 1
@@ -361,22 +389,13 @@ class Game:
         self.particles.spawn(x, y, random.uniform(-100, 100), random.uniform(-200, -50), YELLOW, 0.5)
         self.sound.play("coin")
 
+        self.achievements.record("coins_collected")
+        self.achievements.set_stat("best_combo", self.combo)
+
         if random.random() < 0.1 and self.player.boost_timer <= 0:
             self.player.apply_boost()
             self.set_feedback("BOOST!", 0.8)
             self.sound.play("boost")
-
-    def _on_powerup(self, kind, x, y):
-        col, _, _ = POWERUP_META[kind]
-        self.particles.spawn(x, y, random.uniform(-150, 150), random.uniform(-250, -80), col, 0.6)
-        self.sound.play("powerup")
-        self.player.apply_powerup(kind)
-
-        labels = {
-            POWERUP_SHIELD: "SHIELD ON!",
-            POWERUP_TIMEFREEZE: "TIME FREEZE!"
-        }
-        self.set_feedback(labels[kind], 1.0)
 
     def _recalc_multiplier(self):
         self.multiplier = get_combo_multiplier(self.combo)
@@ -396,8 +415,6 @@ class Game:
 
         for obj in self.coins:
             obj.draw(self._gameplay_surf)
-        for obj in self.powerups:
-            obj.draw(self._gameplay_surf)
 
         self.player.draw(self._gameplay_surf, pg.time.get_ticks())
 
@@ -415,7 +432,7 @@ class Game:
         self.hud.draw(
             screen, self.score, self.level, self.speed_pct,
             self.selected_diff, self.multiplier, self.lives, self.base_lives,
-            self.player.boost_timer, self.player,
+            self.player.boost_timer,
         )
 
         self.btn_pause.draw(screen, self.fonts[2])
@@ -429,6 +446,12 @@ class Game:
 
         if self.level_flash_timer > 0:
             self._draw_level_flash(screen)
+
+        if self.hit_flash_timer > 0:
+            self._draw_hit_flash(screen)
+
+        if self.toast_timer > 0 and self.toast_ach:
+            self.hud.draw_achievement_toast(screen, self.toast_ach, self.toast_timer, self.toast_max)
 
     def _draw_feedback(self, screen):
         if self.fb_timer <= 0 or not self.fb_text:
@@ -456,6 +479,12 @@ class Game:
         t.set_alpha(alpha)
         y_offset = int(20 * math.sin(pg.time.get_ticks() / 100))
         screen.blit(t, t.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 40 + y_offset)))
+
+    def _draw_hit_flash(self, screen):
+        alpha = int(clamp(self.hit_flash_timer / 0.25 * 180, 0, 180))
+        s = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA)
+        pg.draw.rect(s, (255, 0, 0, alpha), (0, 0, WIDTH, HEIGHT), 14)
+        screen.blit(s, (0, 0))
 
     def draw_overlay(self, screen, title_text, title_color, box_h, box_border_color):
         overlay = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA)
@@ -540,6 +569,7 @@ class Game:
                 self.running = False
                 save_progress(self.wallet, self.upgrades)
                 save_high_score(self.high_score)
+                self.achievements.save()
 
             self.states[self.current_state].handle_event(self, event)
 
