@@ -55,6 +55,8 @@ body {
   font-weight: bold;
   letter-spacing: 1px;
   text-decoration: none;
+  border: 2px solid #ffffff;
+  cursor: pointer;
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
@@ -66,13 +68,11 @@ body {
 .btn-primary {
   background: #2da54b;
   color: #ffffff;
-  border: 2px solid #ffffff;
 }
 
 .btn-secondary {
   background: #3c3c6e;
   color: #ffffff;
-  border: 2px solid #ffffff;
 }
 
 .hint {
@@ -106,6 +106,24 @@ body {
   border-radius: 12px;
   overflow: hidden;
   background: #000;
+  min-height: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.start-overlay {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.start-btn {
+  font-size: 18px;
+  padding: 18px 48px;
+}
+
+.start-overlay .hint {
+  margin-top: 16px;
 }
 
 .game-frame {
@@ -235,6 +253,10 @@ body {
 }
 
 @media (max-width: 600px) {
+  .game-frame-wrap {
+    min-height: 420px;
+  }
+
   .game-frame {
     height: 420px;
   }
