@@ -23,16 +23,15 @@
 
 <section id="play" class="section play-section">
   <h2>Play</h2>
-  <div class="game-frame-wrap">
-    <iframe
-      class="game-frame"
-      src="game/index.html"
-      title="Atari Racer"
-      loading="lazy"
-      allow="autoplay; fullscreen"
-    ></iframe>
+
+  <div class="game-frame-wrap" id="gameFrameWrap">
+    <div class="start-overlay" id="startOverlay">
+      <button class="btn btn-primary start-btn" id="startBtn">START GAME</button>
+      <p class="hint">Loads the game in your browser. May take a few seconds on first load.</p>
+    </div>
   </div>
-  <p class="hint">First load can take a few seconds while the game boots in your browser. Click inside the game once it loads so keyboard input registers.</p>
+
+  <p class="hint">Click inside the game once it loads so keyboard input registers.</p>
 </section>
 
 <section class="section">
@@ -148,6 +147,23 @@
   <p>MIT Licensed. Contact: vidatwin18@gmail.com</p>
   <p><a href="https://github.com/VIDAKHOSHPEY22/Atari-Racer">View on GitHub</a></p>
 </footer>
+
+<script>
+  document.getElementById('startBtn').addEventListener('click', function () {
+    var wrap = document.getElementById('gameFrameWrap');
+    var overlay = document.getElementById('startOverlay');
+
+    var iframe = document.createElement('iframe');
+    iframe.className = 'game-frame';
+    iframe.src = 'game/index.html';
+    iframe.title = 'Atari Racer';
+    iframe.setAttribute('allow', 'autoplay; fullscreen');
+
+    overlay.remove();
+    wrap.appendChild(iframe);
+    iframe.focus();
+  });
+</script>
 
 </body>
 </html>
