@@ -1,4 +1,3 @@
-import sys
 import pygame as pg
 
 WIDTH, HEIGHT = 800, 600
@@ -27,5 +26,8 @@ _COMBO_THRESHOLDS = (3, 7, 12, 18, 25)
 _COMBO_MULTIPLIERS = (1.5, 2.0, 2.5, 3.0, 4.0)
 COMBO_MAP = {t: m for t, m in zip(_COMBO_THRESHOLDS, _COMBO_MULTIPLIERS)}
 
-IS_WEB = sys.platform == "emscripten"
-HAS_NUMPY = False
+try:
+    import numpy as np
+    HAS_NUMPY = True
+except ImportError:
+    HAS_NUMPY = False
