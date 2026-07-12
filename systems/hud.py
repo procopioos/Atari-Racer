@@ -8,7 +8,7 @@ class HUD:
     def __init__(self, fonts):
         self.small = fonts[1]
         self.tiny = fonts[2]
-        self.surf = pg.Surface((240, 175), pg.SRCALPHA)
+        self.surf = pg.Surface((240, 155), pg.SRCALPHA)
         self._text_cache = {}
 
     def _render(self, font, text, color):
@@ -18,9 +18,9 @@ class HUD:
         return self._text_cache[key]
 
     def draw(self, surface, score, level, speed_pct, difficulty, multiplier,
-             lives, max_lives, boost_timer, player):
+             lives, max_lives, boost_timer):
         self.surf.fill((0, 0, 0, 180))
-        pg.draw.rect(self.surf, (255, 255, 255, 40), (0, 0, 240, 175), 3, border_radius=10)
+        pg.draw.rect(self.surf, (255, 255, 255, 40), (0, 0, 240, 155), 3, border_radius=10)
 
         pulse = int(8 * abs(math.sin(pg.time.get_ticks() / 300)))
         score_col = (255, 220, 50 + pulse)
@@ -53,20 +53,32 @@ class HUD:
                       clamp_color(col[0] + glow, col[1] + glow, col[2]),
                       130, 126, tiny=True)
 
-        active_icons = [
-            (k, player.powerups[k], POWERUP_META[k][2])
-            for k in (POWERUP_SHIELD, POWERUP_TIMEFREEZE)
-            if player.has_powerup(k)
-        ]
-
-        for idx, (kind, timer, max_t) in enumerate(active_icons):
-            col, label, _ = POWERUP_META[kind]
-            bw = int(70 * (timer / max_t))
-            pg.draw.rect(self.surf, (40, 40, 40), (12 + idx * 80, 158, 70, 8), border_radius=3)
-            pg.draw.rect(self.surf, col, (12 + idx * 80, 158, bw, 8), border_radius=3)
-            self._blit(label, col, 12 + idx * 80, 166, tiny=True)
-
         surface.blit(self.surf, (10, 10))
+
+    def draw_achievement_toast(self, surface, ach, timer, max_timer):
+        alpha = 255
+        if timer < 0.5:
+            alpha = int(255 * (timer / 0.5))
+        elif timer > max_timer - 0.4:
+            alpha = int(255 * ((max_timer - timer) / 0.4))
+        alpha = clamp(alpha, 0, 255)
+
+        box_w, box_h = 340, 64
+        bx = WIDTH // 2 - box_w // 2
+        by = 20
+
+        box = pg.Surface((box_w, box_h), pg.SRCALPHA)
+        box.fill((25, 20, 5, 220))
+        pg.draw.rect(box, (255, 215, 0, 200), (0, 0, box_w, box_h), 3, border_radius=10)
+
+        title = self.small.render("ACHIEVEMENT UNLOCKED", True, YELLOW)
+        box.blit(title, (box_w // 2 - title.get_width() // 2, 8))
+
+        name = self.small.render(ach["name"], True, WHITE)
+        box.blit(name, (box_w // 2 - name.get_width() // 2, 34))
+
+        box.set_alpha(alpha)
+        surface.blit(box, (bx, by))
 
     def _blit(self, text, color, x, y, tiny=False):
         if isinstance(color, tuple):
