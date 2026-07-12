@@ -36,3 +36,41 @@ def save_progress(wallet, upgrades):
             f.write(f"{wallet},{upgrades['speed']},{upgrades['life']}")
     except OSError:
         pass
+
+def load_stats():
+    stats = {}
+    try:
+        with open("stats.txt") as f:
+            for line in f:
+                if "=" in line:
+                    k, v = line.strip().split("=", 1)
+                    try:
+                        stats[k] = int(v)
+                    except ValueError:
+                        pass
+    except (FileNotFoundError, OSError):
+        pass
+    return stats
+
+def save_stats(stats):
+    try:
+        with open("stats.txt", "w") as f:
+            for k, v in stats.items():
+                f.write(f"{k}={v}\n")
+    except OSError:
+        pass
+
+def load_achievements():
+    try:
+        with open("achievements.txt") as f:
+            content = f.read().strip()
+        return set(x for x in content.split(",") if x)
+    except (FileNotFoundError, OSError):
+        return set()
+
+def save_achievements(unlocked):
+    try:
+        with open("achievements.txt", "w") as f:
+            f.write(",".join(sorted(unlocked)))
+    except OSError:
+        pass
