@@ -1,5 +1,5 @@
 import pygame as pg
-import sys
+import asyncio
 import random
 import math
 from core.settings import *
@@ -553,15 +553,15 @@ class Game:
         hint = f_tiny.render("R restart", True, GRAY)
         screen.blit(hint, (cx - hint.get_width() // 2, by + 308))
 
-    def run(self):
+    async def run(self):
         while self.running:
             dt = min(self.clock.tick(FPS) / 1000.0, 0.05)
             self._handle_events()
             self._update(dt)
             self._draw()
+            await asyncio.sleep(0)
 
         pg.quit()
-        sys.exit()
 
     def _handle_events(self):
         for event in pg.event.get():
