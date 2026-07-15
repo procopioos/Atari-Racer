@@ -37,7 +37,7 @@ python atari.py
 | Combo Multiplier | Chain obstacles and coins for multipliers up to x4 |
 | Sound Effects | Procedurally generated audio for coins, boost, hits, and more |
 | Particle Effects | Explosions, sparks, and boost trail effects |
-| Power-Ups | Shield and Time Freeze pickups |
+| Power-Up | Shield pickups |
 | Difficulty Levels | Easy, Medium, and Hard |
 | High Score | Automatically saves your best score |
 | Garage Upgrades | Spend coins on permanent speed and life upgrades |
