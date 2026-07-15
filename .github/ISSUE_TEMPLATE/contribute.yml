@@ -6,7 +6,7 @@ body:
   - type: input
     attributes:
       label: What are you adding?
-      description: TheM1ddleM1n cannot mind read. Tell me a short description of what you plan to add or remove.
+      description: Tell me a short description of what you plan to add or remove.
       placeholder: Streamlining performance and removing useless features.
     validations:
       required: true
