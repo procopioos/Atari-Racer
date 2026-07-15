@@ -13,7 +13,7 @@
 
 ## About the Project
 
-ATARI RACER is an exciting arcade-style racing game where you dodge traffic, collect coins, and set high scores. The game features 3 difficulty levels, 15 car skins with unique speed bonuses, boost mechanics and a combo multiplier system.
+ATARI RACER is an exciting arcade-style racing game where you dodge traffic, collect coins, and set high scores. The game features 3 difficulty levels, 10 car skins with unique speed bonuses, boost mechanics and a combo multiplier system.
 
 ---
 
