@@ -66,7 +66,7 @@
 ## Known Limitations (No issues)
 
 - Garage and Game Over screens are mouse-only for navigation; no keyboard shortcut exists to back out of them aside from `R` (restart) on Game Over.
-- Window size is fixed at 800x600 and does not currently support live resizing.
+- Pygame window size is currently fixed at 800x600 and does not currently support live resizing.
 
 ## Contact
 
