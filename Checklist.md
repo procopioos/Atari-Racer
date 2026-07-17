@@ -63,10 +63,6 @@
 
 - [x] Refractoring
 
-## Completed - procopioos
-
-- [x] Sound bug resolution
-
 ## Known Limitations (No issues)
 
 - Garage and Game Over screens are mouse-only for navigation; no keyboard shortcut exists to back out of them aside from `R` (restart) on Game Over.
