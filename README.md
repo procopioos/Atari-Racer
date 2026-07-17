@@ -68,6 +68,7 @@ python atari.py
 - Bump pip/github actions stuff
 - Removed the rain weather effect and RainPool system to simplify the gameplay loop
 - Reduced the car skin roster from 15 to 10 and renamed all skins for a more professional tone
+- Updated to Python 3.14 support and fixed sound bug
 
 ---
 
