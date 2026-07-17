@@ -146,8 +146,17 @@ pyinstaller --onefile --windowed atari.py
     </td>
   </tr>
 </table>
-    <table align="center">
+<table align="center">
   <tr>
+    <td align="center">
+      <a href="https://github.com">
+        <img src="https://github.com/procopioos.png?size=80" width="70" height="70" style="border-radius:50%;" />
+        <br />
+        <b>👑 procopioos</b>
+      </a>
+      <br />
+      <img src="https://img.shields.io/badge/-Core%20Contributor-d4af37?style=flat-square" /><br />
+    </td>
     <td align="center">
       <a href="https://github.com/Esmaili963">
         <img src="https://github.com/Esmaili963.png?size=80" width="70" height="70" style="border-radius:50%;" />
@@ -195,6 +204,7 @@ pyinstaller --onefile --windowed atari.py
     </td>
   </tr>
 </table>
+
 
 ---
 
