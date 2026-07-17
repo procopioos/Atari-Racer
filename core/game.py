@@ -86,7 +86,7 @@ class Game:
 
         self._blur_surf = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA)
         self._prerender_blur_lines()
-        self._gameplay_surf = pg.Surface((WIDTH, HEIGHT))
+        self._gameplay_surf = pg.Surface((WIDTH, HEIGHT), 0, self.screen)
 
     def _get_fonts(self):
         return (
@@ -423,8 +423,12 @@ class Game:
         if self.speed_blur_alpha > 4:
             alpha = int(self.speed_blur_alpha)
             self._blur_surf.fill((0, 0, 0, 0))
+            bmask = pg.Surface(self._blur_lines.get_size(), pg.SRCALPHA)
+            bmask.fill((255, 255, 255, clamp(alpha, 0, 255)))
+            self._blur_lines.blit(bmask, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
             self._blur_surf.blit(self._blur_lines, (0, 0))
-            self._blur_surf.set_alpha(alpha)
+            bmask.fill((255, 255, 255, 255))
+            self._blur_lines.blit(bmask, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
             self._gameplay_surf.blit(self._blur_surf, (0, 0))
 
         screen.blit(self._gameplay_surf, (0, 0))
@@ -441,7 +445,9 @@ class Game:
 
         if self.score >= 50 and self.player.boost_timer <= 0:
             hint = self.fonts[2].render("SPACE = BOOST (50 pts)", True, (255, 200, 0))
-            hint.set_alpha(128 + int(64 * abs(math.sin(pg.time.get_ticks() / 200))))
+            hmask = pg.Surface(hint.get_size(), pg.SRCALPHA)
+            hmask.fill((255, 255, 255, 128 + int(64 * abs(math.sin(pg.time.get_ticks() / 200)))))
+            hint.blit(hmask, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
             screen.blit(hint, (WIDTH - 180, HEIGHT - 30))
 
         if self.level_flash_timer > 0:
@@ -461,29 +467,39 @@ class Game:
         y = self.fb_pos[1] - int((0.8 - self.fb_timer) * 80)
 
         surf = self.fonts[1].render(self.fb_text, True, YELLOW)
-        surf.set_alpha(clamp(alpha, 0, 255))
+        mask = pg.Surface(surf.get_size(), pg.SRCALPHA)
+        mask.fill((255, 255, 255, clamp(alpha, 0, 255)))
+        surf.blit(mask, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
 
         shadow = self.fonts[1].render(self.fb_text, True, BLACK)
-        shadow.set_alpha(alpha // 2)
+        smask = pg.Surface(shadow.get_size(), pg.SRCALPHA)
+        smask.fill((255, 255, 255, clamp(alpha // 2, 0, 255)))
+        shadow.blit(smask, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
 
         screen.blit(shadow, (self.fb_pos[0] - surf.get_width() // 2 + 2, y + 2))
         screen.blit(surf, surf.get_rect(center=(self.fb_pos[0], y)))
 
     def _draw_level_flash(self, screen):
         alpha = int(clamp(self.level_flash_timer / 1.0 * 200, 0, 200))
-        s = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA)
-        s.fill((255, 255, 100, min(alpha // 4, 40)))
+        s = pg.Surface((WIDTH, HEIGHT), 0, screen)
+        s.fill((255, 255, 100))
+        s.set_alpha(min(alpha // 4, 40))
         screen.blit(s, (0, 0))
 
         t = self.fonts[0].render(f"LEVEL {self.level}!", True, YELLOW)
-        t.set_alpha(alpha)
+        tmask = pg.Surface(t.get_size(), pg.SRCALPHA)
+        tmask.fill((255, 255, 255, clamp(alpha, 0, 255)))
+        t.blit(tmask, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
         y_offset = int(20 * math.sin(pg.time.get_ticks() / 100))
         screen.blit(t, t.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 40 + y_offset)))
 
     def _draw_hit_flash(self, screen):
         alpha = int(clamp(self.hit_flash_timer / 0.25 * 180, 0, 180))
-        s = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA)
-        pg.draw.rect(s, (255, 0, 0, alpha), (0, 0, WIDTH, HEIGHT), 14)
+        s = pg.Surface((WIDTH, HEIGHT), 0, screen)
+        s.fill((0, 0, 0))
+        s.set_colorkey((0, 0, 0))
+        pg.draw.rect(s, (255, 0, 0), (0, 0, WIDTH, HEIGHT), 14)
+        s.set_alpha(alpha)
         screen.blit(s, (0, 0))
 
     def draw_overlay(self, screen, title_text, title_color, box_h, box_border_color):

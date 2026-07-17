@@ -33,7 +33,8 @@ class Road:
         if cls._base_surf is not None:
             return cls._base_surf
 
-        grass = pg.Surface((ROAD_LEFT, HEIGHT))
+        disp = pg.display.get_surface()
+        grass = pg.Surface((ROAD_LEFT, HEIGHT), 0, disp)
         grass.fill(GRASS_COLOR)
         rng = random.Random(42)
         for _ in range(300):
@@ -43,7 +44,7 @@ class Road:
             col = tuple(clamp(GRASS_COLOR[i] + shade, 0, 255) for i in range(3))
             pg.draw.rect(grass, col, (gx, gy, rng.randint(2, 6), rng.randint(3, 8)))
 
-        s = pg.Surface((WIDTH, HEIGHT))
+        s = pg.Surface((WIDTH, HEIGHT), 0, disp)
         s.blit(grass, (0, 0))
         s.blit(pg.transform.flip(grass, True, False), (ROAD_RIGHT, 0))
 
@@ -51,7 +52,7 @@ class Road:
         pg.draw.rect(s, SHOULDER_COLOR, (ROAD_RIGHT, 0, 22, HEIGHT))
 
         road_w = ROAD_RIGHT - ROAD_LEFT
-        road_surface = pg.Surface((road_w, HEIGHT))
+        road_surface = pg.Surface((road_w, HEIGHT), 0, disp)
         base_intensity = 35
         stripe_count = 10
         stripe_h = HEIGHT // stripe_count

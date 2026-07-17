@@ -13,6 +13,9 @@ class MenuRenderer:
         self.selected_skin = 0
         self.selected_diff = "Medium"
         self._init_buttons()
+        self._grad_strip = pg.Surface((1, HEIGHT))
+        self._grad_cache_key = None
+        self._grad_surf = None
     
     def _init_buttons(self):
         btn_w = min(200, max(160, WIDTH // 5))
@@ -32,13 +35,21 @@ class MenuRenderer:
         self._arrow_left_rect = pg.Rect(WIDTH // 2 - 145, 365, 40, 40)
         self._arrow_right_rect = pg.Rect(WIDTH // 2 + 105, 365, 40, 40)
     
+    def _draw_bg(self, screen, elapsed):
+        key = int(elapsed * 10)
+        if key != self._grad_cache_key:
+            self._grad_cache_key = key
+            for y in range(HEIGHT):
+                shade = clamp(10 + int(25 * math.sin(y / 30 + elapsed)), 0, 255)
+                self._grad_strip.set_at((0, y), (shade, shade, min(shade + 10, 255)))
+            self._grad_surf = pg.transform.scale(self._grad_strip, (WIDTH, HEIGHT))
+        screen.blit(self._grad_surf, (0, 0))
+    
     def draw_menu(self, screen, high_score, wallet):
         f_main, f_small, f_tiny = self.fonts
         elapsed = pg.time.get_ticks() / 1000
         
-        for y in range(HEIGHT):
-            shade = clamp(10 + int(25 * math.sin(y / 30 + elapsed)), 0, 255)
-            pg.draw.line(screen, (shade, shade, min(shade + 10, 255)), (0, y), (WIDTH, y))
+        self._draw_bg(screen, elapsed)
         
         title = f_main.render("ATARI RACER", True, YELLOW)
         tx = WIDTH // 2 - title.get_width() // 2
@@ -122,9 +133,7 @@ class MenuRenderer:
         f_main, f_small, f_tiny = self.fonts
         elapsed = pg.time.get_ticks() / 1000
         
-        for y in range(HEIGHT):
-            shade = clamp(10 + int(25 * math.sin(y / 30 + elapsed)), 0, 255)
-            pg.draw.line(screen, (shade, shade, min(shade + 10, 255)), (0, y), (WIDTH, y))
+        self._draw_bg(screen, elapsed)
         
         title = f_main.render("GARAGE", True, YELLOW)
         screen.blit(title, (WIDTH // 2 - title.get_width() // 2, 35))

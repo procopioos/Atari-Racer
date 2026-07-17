@@ -8,7 +8,7 @@ class HUD:
     def __init__(self, fonts):
         self.small = fonts[1]
         self.tiny = fonts[2]
-        self.surf = pg.Surface((240, 155), pg.SRCALPHA)
+        self.surf = pg.Surface((340, 155), pg.SRCALPHA)
         self._text_cache = {}
 
     def _render(self, font, text, color):
@@ -20,7 +20,7 @@ class HUD:
     def draw(self, surface, score, level, speed_pct, difficulty, multiplier,
              lives, max_lives, boost_timer):
         self.surf.fill((0, 0, 0, 180))
-        pg.draw.rect(self.surf, (255, 255, 255, 40), (0, 0, 240, 155), 3, border_radius=10)
+        pg.draw.rect(self.surf, (255, 255, 255, 40), (0, 0, 340, 155), 3, border_radius=10)
 
         pulse = int(8 * abs(math.sin(pg.time.get_ticks() / 300)))
         score_col = (255, 220, 50 + pulse)
