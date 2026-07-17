@@ -4,7 +4,12 @@ from core.settings import HAS_NUMPY
 
 class SoundManager:
     def __init__(self):
-        pg.mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
+        self.available = False
+        try:
+            pg.mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
+            self.available = True
+        except Exception:
+            pass
         self.sounds = self._build_sounds()
     
     def _make_sound(self, wave):
@@ -20,7 +25,7 @@ class SoundManager:
         return Dummy()
     
     def _build_sounds(self):
-        if not HAS_NUMPY:
+        if not HAS_NUMPY or not self.available:
             dummy = self._dummy_sound()
             return {k: dummy for k in ("coin", "boost", "levelup", "hit", "explosion", "powerup")}
         
@@ -63,5 +68,5 @@ class SoundManager:
                    hit=hit, explosion=explosion, powerup=powerup)
     
     def play(self, name):
-        if name in self.sounds:
+        if self.available and name in self.sounds:
             self.sounds[name].play()
